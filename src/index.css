@@ -1,0 +1,99 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-outline-sm {
+    color: transparent;
+    -webkit-text-stroke: 1px black; /* Outline width and color */
+  }
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 2px black; /* Outline width and color */
+  }
+  .text-outline-lg {
+    color: transparent;
+    -webkit-text-stroke: 3px black; /* Larger outline */
+  }
+  .text-outline-white-sm {
+    color: transparent;
+    -webkit-text-stroke: 1px white; /* White outline */
+  }
+  .text-outline-white {
+    color: transparent;
+    -webkit-text-stroke: 2px white; /* White outline */
+  }
+  .text-outline-lg {
+    color: transparent;
+    -webkit-text-stroke: 3px white; /* White outline */
+  }
+}
+
+*{
+  font-family: "Poppins", sans-serif;
+  margin:0;
+  padding:0
+}
+
+.no-scrollbar::-webkit-scrollbar{
+height:0
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-10%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 1s ease-out;
+}
+
+
+.no-scrollbar::-webkit-scrollbar{
+height:0
+}
+
+
+.mySwiper {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  border-radius:10px;
+}
+
+.mySwiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mySwiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+.custom-steps .ant-steps-item-process .ant-steps-item-icon {
+  background-color: #3f488d !important; /* Orange for active */
+  border-color: #3f488d !important;
+}
+
+
+

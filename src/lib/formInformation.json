@@ -1,0 +1,224 @@
+{
+  "formInputInfo": [
+    {
+      "stepName": "Personal Information",
+      "fields": [
+        {
+          "label": "Full Name",
+          "name": "fullName",
+          "type": "text",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  },
+        {
+          "label": "Date of Birth",
+          "name": "dob",
+          "type": "date",
+          "fieldType": "input",
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "Home Address",
+          "name": "homeAddress",
+          "type": "text",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  },
+        {
+          "label": "Contact Number",
+          "name": "contact",
+          "type": "tel",
+          "fieldType": "input",
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "Email Address",
+          "name": "email",
+          "type": "email",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  },
+        {
+          "label": "Password",
+          "name": "password",
+          "type": "password",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  }
+      ]
+    },
+    {
+      "stepName": "Business Information",
+      "fields": [
+        {
+          "label": "Business Sector",
+          "name": "business_sector",
+          "type": "text",
+          "fieldType": "select",
+          "options": [{"label":"Banking","name":"banking"}, {"label":"Finance","name":"finance"}, {"label":"Technology","name":"technology"}],
+          "column": 2,
+          "required":true
+                  },
+        {
+          "label": "Business Work Email",
+          "name": "business_work_email",
+          "type": "email",
+          "fieldType": "input",
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "Business WhatsApp Number",
+          "name": "business_whatsapp",
+          "type": "tel",
+          "fieldType": "input",
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "Business Work Address",
+          "name": "business_work_address",
+          "type": "text",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  },
+        {
+          "label": "Business Closest Bus Stop",
+          "name": "business_closest_bstop",
+          "type": "text",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  }
+      ]
+    },
+    {
+      "stepName": "Work Information",
+      "fields": [
+        {
+          "label": "Work Email Address",
+          "name": "work_email",
+          "type": "email",
+          "fieldType": "input",
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "Work Phone Number",
+          "name": "work_phone",
+          "type": "tel",
+          "fieldType": "input",
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "Office Address",
+          "name": "office_address",
+          "type": "text",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  },
+        {
+          "label": "Office Closest Bus Stop",
+          "name": "office_bstop",
+          "type": "text",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  }
+      ]
+    },
+    {
+      "stepName": "Identity Verification",
+      "fields": [
+         {
+          "label": "Identity",
+          "name": "identity",
+          "type": "text",
+          "fieldType": "select",
+          "options": [
+  { "label": "National Identification Card", "name": "national_identification_card" },
+  { "label": "Driver's License", "name": "drivers_license" },
+  { "label": "Voter's Card", "name": "voters_card" },
+  { "label": "International Passport", "name": "international_passport" },
+  { "label": "CAC", "name": "cac" },
+  { "label": "Tax Clearance", "name": "tax_clearance" },
+  { "label": "SSN", "name": "ssn" }
+],
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "BVN",
+          "note": "Select your means of identification at the top 👆",
+          "name": "bvn",
+          "type": "file",
+          "fieldType": "input",
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "BVN",
+          "name": "bvn",
+          "type": "text",
+          "fieldType": "input",
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "Utility Bills",
+          "name": "utility_bills",
+          "type": "text",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  }
+      ]
+    },
+     {
+      "stepName": "Account Information",
+      "fields": [
+        {
+          "label": "Account Name",
+          "name": "account_name",
+          "type": "text",
+          "fieldType": "input",
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "Account Number",
+          "name": "account_number",
+          "type": "text",
+          "fieldType": "input",
+          "column": 1,
+          "required":true
+                  },
+        {
+          "label": "Card Number",
+          "name": "card_number",
+          "type": "text",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  },
+        {
+          "label": "Payment Apps",
+          "name": "payment_apps",
+          "type": "text",
+          "fieldType": "input",
+          "column": 2,
+          "required":true
+                  }
+      ]
+    }
+  ]
+}
