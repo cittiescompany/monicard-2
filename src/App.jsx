@@ -4,7 +4,9 @@ import RootLayout from './_root/RootLayout'
 import Home from './pages/Home'
 import SignUpForm from './pages/SignUpForm'
 import SignInForm from './pages/SignInForm'
+import TermsPage from './pages/TermPage'
 import { AuthProvider } from './lib/AuthContext'
+import DisclaimerPage from './pages/Disclaimer'
 // import RegisterForm from './pages/RegisterForm'
 // import MultiStepForm from './pages/MultiStepForm'
 // import AntDForm from './pages/AntDForm'
@@ -23,6 +25,8 @@ const App = () => {
     <Route element={<RootLayout/>}>
     <Route path='/' element={<Home/>}/>
     </Route>
+    <Route path='/terms' element={<TermsPage/>}/>
+    <Route path='/disclaimer' element={<DisclaimerPage/>}/>
     </Routes>
     </AuthProvider>
   )
