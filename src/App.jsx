@@ -7,7 +7,8 @@ import SignInForm from './pages/SignInForm'
 import TermsPage from './pages/TermPage'
 import { AuthProvider } from './lib/AuthContext'
 import DisclaimerPage from './pages/Disclaimer'
-import PrivacyPolicy from './pages/PrivacyPolicy'
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import DeleteAccount from './pages/DeleteAccount'
 // import RegisterForm from './pages/RegisterForm'
 // import MultiStepForm from './pages/MultiStepForm'
 // import AntDForm from './pages/AntDForm'
@@ -26,9 +27,10 @@ const App = () => {
     <Route element={<RootLayout/>}>
     <Route path='/' element={<Home/>}/>
     </Route>
-    <Route path='/terms' element={<TermsPage/>}/>
-    <Route path='/disclaimer' element={<DisclaimerPage/>}/>
+    <Route path='/delete-account' element={<DeleteAccount/>}/>
     <Route path='/privacy' element={<PrivacyPolicy/>}/>
+    <Route path='/disclaimer' element={<DisclaimerPage/>}/>
+    <Route path='/terms' element={<TermsPage/>}/>
     </Routes>
     </AuthProvider>
   )

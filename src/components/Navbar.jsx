@@ -23,7 +23,7 @@ const Navbar = () => {
         <img
           src={navbarData.logo}
           alt="logo"
-          className="w-24 bg-white rounded"
+          className="w-16 h-14 bg-white rounded"
         />
       </div>
 
