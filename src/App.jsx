@@ -9,6 +9,7 @@ import { AuthProvider } from './lib/AuthContext'
 import DisclaimerPage from './pages/Disclaimer'
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import DeleteAccount from './pages/DeleteAccount'
+import Offer from './pages/Offer'
 // import RegisterForm from './pages/RegisterForm'
 // import MultiStepForm from './pages/MultiStepForm'
 // import AntDForm from './pages/AntDForm'
@@ -27,6 +28,7 @@ const App = () => {
     <Route element={<RootLayout/>}>
     <Route path='/' element={<Home/>}/>
     </Route>
+    <Route path='/offer' element={<Offer/>}/>
     <Route path='/delete-account' element={<DeleteAccount/>}/>
     <Route path='/privacy' element={<PrivacyPolicy/>}/>
     <Route path='/disclaimer' element={<DisclaimerPage/>}/>
