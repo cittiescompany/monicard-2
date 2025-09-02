@@ -6,7 +6,7 @@ const Register = () => {
     const query=searchParams.get("query");
     useEffect(() => {
         if (query) {
-            window.location.href = `https://account.cittis.cc/?query=${query}`; // Redirect to the
+            window.location.href = `https://account.cittis.cc/?ref=${query}`; // Redirect to the
         }
     }, [query]);
 
