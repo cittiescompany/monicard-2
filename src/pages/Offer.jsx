@@ -1,8 +1,64 @@
 import React, { useState } from 'react';
-import { Calendar, FileText, User, MapPin, DollarSign, Clock } from 'lucide-react';
+import { Calendar, FileText, User, MapPin, DollarSign, Clock, Save, Database, Eye } from 'lucide-react';
+
+// Simulated Backend Database
+class OfferDatabase {
+  constructor() {
+    this.offers = [];
+    this.nextId = 1;
+  }
+
+  // Save new offer
+  saveOffer(offerData) {
+    const offer = {
+      id: this.nextId++,
+      ...offerData,
+      createdAt: new Date().toISOString(),
+      status: 'Draft'
+    };
+    this.offers.unshift(offer); // Add to beginning of array
+    return offer;
+  }
+
+  // Get all offers
+  getAllOffers() {
+    return this.offers;
+  }
+
+  // Get offer by ID
+  getOfferById(id) {
+    return this.offers.find(offer => offer.id === id);
+  }
+
+  // Update offer status
+  updateOfferStatus(id, status) {
+    const offer = this.offers.find(offer => offer.id === id);
+    if (offer) {
+      offer.status = status;
+      offer.updatedAt = new Date().toISOString();
+    }
+    return offer;
+  }
+
+  // Delete offer
+  deleteOffer(id) {
+    const index = this.offers.findIndex(offer => offer.id === id);
+    if (index !== -1) {
+      return this.offers.splice(index, 1)[0];
+    }
+    return null;
+  }
+}
+
+// Initialize database
+const offerDB = new OfferDatabase();
 
 const FreelanceOfferGenerator = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentView, setCurrentView] = useState('form'); // 'form', 'database', 'preview'
+  const [savedOffers, setSavedOffers] = useState([]);
+  const [saveStatus, setSaveStatus] = useState('');
+  const [selectedOffer, setSelectedOffer] = useState(null);
   const [loginData, setLoginData] = useState({
     username: '',
     password: ''
@@ -77,6 +133,75 @@ const FreelanceOfferGenerator = () => {
     setIsLoggedIn(false);
     setLoginData({ username: '', password: '' });
     setShowPreview(false);
+    setCurrentView('form');
+    setSaveStatus('');
+  };
+
+  const saveOfferToDatabase = () => {
+    try {
+      // Validate required fields
+      if (!formData.freelancerName || !formData.freelancerAddress || !formData.startDate || !formData.endDate) {
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus(''), 3000);
+        return;
+      }
+
+      // Save to database
+      const savedOffer = offerDB.saveOffer({
+        ...formData,
+        generatedBy: loginData.username,
+        totalAmountFormatted: `${formData.currency}${parseInt(formData.totalAmount || 0).toLocaleString()}`
+      });
+
+      // Update local state
+      setSavedOffers(offerDB.getAllOffers());
+      setSaveStatus('success');
+      
+      setTimeout(() => setSaveStatus(''), 3000);
+    } catch (error) {
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus(''), 3000);
+    }
+  };
+
+  const loadSavedOffers = () => {
+    setSavedOffers(offerDB.getAllOffers());
+    setCurrentView('database');
+  };
+
+  const loadOfferFromDatabase = (offer) => {
+    setFormData({
+      freelancerName: offer.freelancerName,
+      freelancerAddress: offer.freelancerAddress,
+      position: offer.position,
+      projectDescription: offer.projectDescription,
+      startDate: offer.startDate,
+      endDate: offer.endDate,
+      duration: offer.duration,
+      totalAmount: offer.totalAmount,
+      currency: offer.currency,
+      paymentTerms: offer.paymentTerms,
+      acceptanceDeadline: offer.acceptanceDeadline,
+      signerName: offer.signerName,
+      signerTitle: offer.signerTitle,
+      signerPhone: offer.signerPhone,
+      companyName: offer.companyName,
+      companyAddress: offer.companyAddress,
+      scopeOfWork: offer.scopeOfWork
+    });
+    setCurrentView('form');
+  };
+
+  const updateOfferStatus = (id, newStatus) => {
+    offerDB.updateOfferStatus(id, newStatus);
+    setSavedOffers(offerDB.getAllOffers());
+  };
+
+  const deleteOffer = (id) => {
+    if (window.confirm('Are you sure you want to delete this offer?')) {
+      offerDB.deleteOffer(id);
+      setSavedOffers(offerDB.getAllOffers());
+    }
   };
 
   const formatDate = (dateString) => {
@@ -258,12 +383,160 @@ const FreelanceOfferGenerator = () => {
           </div>
 
           <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-            {/* <p className="text-xs text-gray-600 mb-2">Demo Credentials:</p>
+            <p className="text-xs text-gray-600 mb-2">Demo Credentials:</p>
             <div className="text-xs text-gray-500 space-y-1">
               <div>Username: <span className="font-mono">admin</span> | Password: <span className="font-mono">cities2025</span></div>
               <div>Username: <span className="font-mono">cities</span> | Password: <span className="font-mono">app123</span></div>
               <div>Username: <span className="font-mono">hr</span> | Password: <span className="font-mono">offers2025</span></div>
-            </div> */}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Database View
+  if (currentView === 'database') {
+    return (
+      <div className="max-w-6xl mx-auto p-6 bg-white">
+        <div className="mb-8 flex justify-between items-start flex-wrap gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+              <Database className="text-green-600" />
+              Saved Offers Database
+            </h1>
+            <p className="text-gray-600">View, manage and track all generated offer letters.</p>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={() => setCurrentView('form')}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+            >
+              <FileText size={16} />
+              New Offer
+            </button>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border">
+          <div className="p-4 border-b bg-gray-50">
+            <h2 className="text-lg font-semibold text-gray-800">
+              All Offers ({savedOffers.length})
+            </h2>
+          </div>
+          
+          {savedOffers.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              <Database size={48} className="mx-auto mb-4 text-gray-300" />
+              <h3 className="text-lg font-medium mb-2">No offers saved yet</h3>
+              <p className="mb-4">Create your first offer letter to see it here.</p>
+              <button
+                onClick={() => setCurrentView('form')}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                Create New Offer
+              </button>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">ID</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Freelancer</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Position</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Amount</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Created</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {savedOffers.map((offer, index) => (
+                    <tr key={offer.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="px-4 py-3 text-sm text-gray-900 font-mono">#{offer.id}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{offer.freelancerName}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">{offer.position}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900 font-semibold">{offer.totalAmountFormatted}</td>
+                      <td className="px-4 py-3 text-sm">
+                        <select
+                          value={offer.status}
+                          onChange={(e) => updateOfferStatus(offer.id, e.target.value)}
+                          className={`px-2 py-1 rounded text-xs font-medium border-0 ${
+                            offer.status === 'Draft' ? 'bg-gray-100 text-gray-700' :
+                            offer.status === 'Sent' ? 'bg-blue-100 text-blue-700' :
+                            offer.status === 'Accepted' ? 'bg-green-100 text-green-700' :
+                            offer.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                            'bg-yellow-100 text-yellow-700'
+                          }`}
+                        >
+                          <option value="Draft">Draft</option>
+                          <option value="Sent">Sent</option>
+                          <option value="Accepted">Accepted</option>
+                          <option value="Rejected">Rejected</option>
+                          <option value="Expired">Expired</option>
+                        </select>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500">
+                        {new Date(offer.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => loadOfferFromDatabase(offer)}
+                            className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+                            title="Load & Edit"
+                          >
+                            <Eye size={12} />
+                          </button>
+                          <button
+                            onClick={() => deleteOffer(offer.id)}
+                            className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
+                            title="Delete"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <h3 className="font-semibold text-blue-800 mb-2">Database Statistics</h3>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+            <div>
+              <p className="text-blue-600">Total Offers</p>
+              <p className="font-bold text-blue-800">{savedOffers.length}</p>
+            </div>
+            <div>
+              <p className="text-blue-600">Draft</p>
+              <p className="font-bold text-blue-800">{savedOffers.filter(o => o.status === 'Draft').length}</p>
+            </div>
+            <div>
+              <p className="text-blue-600">Sent</p>
+              <p className="font-bold text-blue-800">{savedOffers.filter(o => o.status === 'Sent').length}</p>
+            </div>
+            <div>
+              <p className="text-blue-600">Accepted</p>
+              <p className="font-bold text-blue-800">{savedOffers.filter(o => o.status === 'Accepted').length}</p>
+            </div>
+            <div>
+              <p className="text-blue-600">Total Value</p>
+              <p className="font-bold text-blue-800">
+                ₦{savedOffers.reduce((sum, offer) => sum + parseInt(offer.totalAmount || 0), 0).toLocaleString()}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -273,7 +546,7 @@ const FreelanceOfferGenerator = () => {
   if (showPreview) {
     return (
       <div className="max-w-4xl mx-auto p-8 bg-white">
-        <div className="no-print mb-6 flex gap-4">
+        <div className="no-print mb-6 flex gap-4 flex-wrap">
           <button
             onClick={() => setShowPreview(false)}
             className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
@@ -287,12 +560,31 @@ const FreelanceOfferGenerator = () => {
             Print/Save as PDF
           </button>
           <button
+            onClick={saveOfferToDatabase}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center gap-2"
+          >
+            <Save size={16} />
+            Save to Database
+          </button>
+          <button
             onClick={handleLogout}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
             Logout
           </button>
         </div>
+
+        {saveStatus === 'success' && (
+          <div className="no-print mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-green-700">✓ Offer saved successfully to database!</p>
+          </div>
+        )}
+
+        {saveStatus === 'error' && (
+          <div className="no-print mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-700">✗ Error saving offer. Please check required fields.</p>
+          </div>
+        )}
 
         <div className="offer-document" style={{ fontFamily: 'Arial, sans-serif', lineHeight: '1.6' }}>
           <div className="text-center mb-8">
@@ -425,7 +717,7 @@ const FreelanceOfferGenerator = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white">
-      <div className="mb-8 flex justify-between items-start">
+      <div className="mb-8 flex justify-between items-start flex-wrap gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
             <FileText className="text-blue-600" />
@@ -433,13 +725,37 @@ const FreelanceOfferGenerator = () => {
           </h1>
           <p className="text-gray-600">Create professional freelance offer letters with customizable terms and conditions.</p>
         </div>
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-        >
-          Logout
-        </button>
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={loadSavedOffers}
+            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
+          >
+            <Database size={16} />
+            View Database ({offerDB.getAllOffers().length})
+          </button>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+          >
+            Logout
+          </button>
+        </div>
       </div>
+
+      {saveStatus === 'success' && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-green-700 flex items-center gap-2">
+            <Save size={16} />
+            ✓ Offer saved successfully to database!
+          </p>
+        </div>
+      )}
+
+      {saveStatus === 'error' && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-700">✗ Error saving offer. Please check required fields.</p>
+        </div>
+      )}
 
       <div className="space-y-8">
         {/* Company Information */}
@@ -689,15 +1005,25 @@ const FreelanceOfferGenerator = () => {
         </div>
 
         {/* Generate Button */}
-        <div className="flex justify-center pt-6">
+        <div className="flex justify-center gap-4 pt-6 flex-wrap">
+          <button
+            type="button"
+            onClick={saveOfferToDatabase}
+            disabled={!formData.freelancerName || !formData.freelancerAddress || !formData.startDate || !formData.endDate || !formData.totalAmount}
+            className="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center gap-2"
+          >
+            <Save size={20} />
+            Save to Database
+          </button>
+          
           <button
             type="button"
             onClick={generateOffer}
             disabled={!formData.freelancerName || !formData.freelancerAddress || !formData.startDate || !formData.endDate || !formData.totalAmount}
-            className="px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center gap-2"
+            className="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center gap-2"
           >
             <FileText size={20} />
-            Generate Offer Letter
+            Preview & Print
           </button>
         </div>
       </div>
